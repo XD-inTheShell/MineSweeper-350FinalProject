@@ -12,7 +12,7 @@ module VGAController(
 	inout ps2_data);
 	
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Lab5/";
+	localparam FILES_PATH = "C:/Users/xd54/Desktop/testFinal/";
 
 	// Clock divider 100 MHz -> 25 MHz
 	wire clk25; // 25MHz clock
@@ -76,7 +76,7 @@ module VGAController(
 	wire[BITS_PER_COLOR-1:0] colorData; // 12-bit color data at current pixel
     wire[BITS_PER_COLOR-1:0] square_color;
     wire ctrl_in_square;
-    assign square_color = 12'd0;
+    assign square_color = 12'h777;
 
 	RAM #(
 		.DEPTH(PALETTE_COLOR_COUNT), 		       // Set depth to contain every color		
@@ -89,43 +89,70 @@ module VGAController(
 		.dataOut(colorData),				       // Color at current pixel
 		.wEn(1'b0)); 						       // We're always reading
 	
-
+	
 	// Assign to output color from register if active
 	wire[BITS_PER_COLOR-1:0] colorOut; 			  // Output color 
-	wire [BITS_PER_COLOR-1:0] active_color;
-  
+	wire [BITS_PER_COLOR-1:0] active_color, active_color0, active_color1;
+
+	wire[9:0] x_index;
+	wire[8:0] y_index;
+	wire[9:0] blockID;
+	wire[8:0] y_proc;
+	wire[31:0] memOut;
+	wire[3:0] blockStatus;
+    
+	assign x_index = x >> 6;
+	assign y_index = y >> 6;
+
   	reg[7:0] STEP_SIZE = 1;
-    wire f;
-    assign f = ((x >= x_topleft) && x <= (x_topleft + 64)) && ((y >= y_topleft) && y <= (y_topleft + 64));
+    wire f; // highlighted?
+    assign f = (x_index == x_topleft) && (y_index == y_topleft);
+	wire bg; // is it background color?
+	assign bg = (x_index == 0 || y_index ==0) || (x_index>=6 || y_index>=6);
 	
-  	always @(posedge screenEnd)
+	assign y_proc = y_index - 1;
+	assign blockID = ((y_proc) << 2) + y_proc + x_index - 1;
+	wire legalBlk;
+	assign legalBlk = blockID < 25;
+	assign blockID_final = bg ? 32'b0 : blockID;
+  	// for testing:
+	VGAtestRAM blockInfo(.wEn(1'b0), .addr({3'b0,blockID}), .clk(clk),
+                  .dataIn(32'b0), .dataOut(memOut));
+	assign blockStatus = memOut[3:0];
+
+	
+
+    // Choose flipped color
+    reg[BITS_PER_COLOR-1:0] BlockColor;
+    /// ********Change in 
+    always @(blockStatus)
+    case(blockStatus)
+        4'd0 : BlockColor = 12'hfff;
+        4'd1 : BlockColor = 12'h770;
+        4'd2 : BlockColor = 12'h0f0;
+        4'd3 : BlockColor = 12'h00f;
+        4'd4 : BlockColor = 12'h700;
+        4'd5 : BlockColor = 12'h070;
+        4'd6 : BlockColor = 12'h007;
+        4'd7 : BlockColor = 12'hff0;
+        4'd8 : BlockColor = 12'h0ff;
+		4'd9 : BlockColor = 12'hf00;
+		4'd10 : BlockColor = 12'h000;
+		4'd11 : BlockColor = 12'h000;
+    endcase
+    
+    assign active_color0 = bg ? colorData : BlockColor;
+	assign active_color = f ? square_color : active_color0;
+  
+	assign colorOut = active ? active_color : 12'd0; // When not active, output black
+	
+	// Quickly assign the output colors to their channels using concatenation
+	assign {VGA_R, VGA_G, VGA_B} = colorOut;
+
+	always @(posedge screenEnd)
 	begin
         x_topleft <= x_topleft + right*STEP_SIZE - left*STEP_SIZE;
         y_topleft <= y_topleft + down*STEP_SIZE - up*STEP_SIZE;
   	end
-      
-
-	assign active_color = f ? square_color : colorData;
-  
-	assign colorOut = active ? active_color : 12'd0; // When not active, output black
-
-    // Choose flipped color
-    reg[BITS_PER_COLOR-1:0] FlipColor;
-    /// ********Change in 
-    wire [3:0] in;
-    always @(in)
-    case(in)
-        4'd0 : FlipColor = 12'hfff;
-        4'd1 : FlipColor = 12'hf00;
-        4'd2 : FlipColor = 12'h0f0;
-        4'd3 : FlipColor = 12'h00f;
-        4'd4 : FlipColor = 12'h700;
-        4'd5 : FlipColor = 12'h070;
-        4'd6 : FlipColor = 12'h007;
-        4'd7 : FlipColor = 12'hff0;
-        4'd8 : FlipColor = 12'h0ff;
-    endcase
-
-	// Quickly assign the output colors to their channels using concatenation
-	assign {VGA_R, VGA_G, VGA_B} = colorOut;
+	
 endmodule
