@@ -12,12 +12,12 @@ module VGAController(
 	inout ps2_data);
 	
 	// Lab Memory Files Location
-	localparam FILES_PATH = "C:/Users/xd54/Desktop/testFinal/";
-
+	//localparam FILES_PATH = "C:/Users/xd54/Desktop/testFinal/";
+	localparam FILES_PATH = "/Users/xiyingdeng/Desktop/Fall2020/ECE350/AG350/MineSweeper-350FinalProject/";
 	// Clock divider 100 MHz -> 25 MHz
 	wire clk25; // 25MHz clock
-	reg [9:0] x_topleft=0;
-    reg [8:0] y_topleft=0;
+	reg [9:0] x_topleft=2;
+    reg [8:0] y_topleft=2;
 	
   
 
@@ -104,7 +104,7 @@ module VGAController(
 	assign x_index = x >> 6;
 	assign y_index = y >> 6;
 
-  	reg[7:0] STEP_SIZE = 1;
+  	localparam STEP_SIZE = 1;
     wire f; // highlighted?
     assign f = (x_index == x_topleft) && (y_index == y_topleft);
 	wire bg; // is it background color?
@@ -116,7 +116,7 @@ module VGAController(
 	assign legalBlk = blockID < 25;
 	assign blockID_final = bg ? 32'b0 : blockID;
   	// for testing:
-	VGAtestRAM blockInfo(.wEn(1'b0), .addr({3'b0,blockID}), .clk(clk),
+	VGAtestRAM blockInfo(.wEn(1'b0), .addr({2'b0,blockID}), .clk(clk),
                   .dataIn(32'b0), .dataOut(memOut));
 	assign blockStatus = memOut[3:0];
 
@@ -127,18 +127,18 @@ module VGAController(
     /// ********Change in 
     always @(blockStatus)
     case(blockStatus)
-        4'd0 : BlockColor = 12'hfff;
-        4'd1 : BlockColor = 12'h770;
-        4'd2 : BlockColor = 12'h0f0;
-        4'd3 : BlockColor = 12'h00f;
-        4'd4 : BlockColor = 12'h700;
-        4'd5 : BlockColor = 12'h070;
-        4'd6 : BlockColor = 12'h007;
-        4'd7 : BlockColor = 12'hff0;
-        4'd8 : BlockColor = 12'h0ff;
-		4'd9 : BlockColor = 12'hf00;
-		4'd10 : BlockColor = 12'h000;
-		4'd11 : BlockColor = 12'h000;
+        4'd0 : BlockColor <= 12'hfff;
+        4'd1 : BlockColor <= 12'h770;
+        4'd2 : BlockColor <= 12'h0f0;
+        4'd3 : BlockColor <= 12'h00f;
+        4'd4 : BlockColor <= 12'h700;
+        4'd5 : BlockColor <= 12'h070;
+        4'd6 : BlockColor <= 12'h007;
+        4'd7 : BlockColor <= 12'hff0;
+        4'd8 : BlockColor <= 12'h0ff;
+		4'd9 : BlockColor <= 12'hf00;
+		4'd10 : BlockColor <= 12'h000;
+		4'd11 : BlockColor <= 12'h000;
     endcase
     
     assign active_color0 = bg ? colorData : BlockColor;
@@ -149,10 +149,30 @@ module VGAController(
 	// Quickly assign the output colors to their channels using concatenation
 	assign {VGA_R, VGA_G, VGA_B} = colorOut;
 
-	always @(posedge screenEnd)
-	begin
-        x_topleft <= x_topleft + right*STEP_SIZE - left*STEP_SIZE;
-        y_topleft <= y_topleft + down*STEP_SIZE - up*STEP_SIZE;
-  	end
+	// debounce the buttons so that it does not 
+	// increase multiple times when user press the button
+	// since screenEnd is asserted frequently
+	// wire up_db, down_db, right_db, left_db;
+	// debouncer db0( .pushed_button(up), .clock(clk), .debounced_button(up_db));
+	// debouncer db1( .pushed_button(down), .clock(clk), .debounced_button(down_db));
+	// debouncer db2( .pushed_button(left), .clock(clk), .debounced_button(left_db));
+	// debouncer db3( .pushed_button(right), .clock(clk), .debounced_button(right_db));
+	//debouncer db( .pushed_button(), .clock(), .debounced_button());
+	reg HasMoved = 0;
+	wire sig;
+	assign sig = up | down | left | right;
+	always @(posedge screenEnd) begin
+		if(sig) begin
+			if(~HasMoved) begin
+				HasMoved <= 1;
+				x_topleft <= x_topleft + right*STEP_SIZE - left*STEP_SIZE;
+        		y_topleft <= y_topleft + down*STEP_SIZE - up*STEP_SIZE;
+			end
+		end 
+		else 
+			HasMoved <= 0;
+		
+	end
+	
 	
 endmodule
