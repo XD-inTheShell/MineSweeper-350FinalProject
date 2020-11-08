@@ -1,0 +1,14 @@
+instrDecode (.jt(), .bne(), .jal(), .rwe(), .jr(), .ALUinB(), .blt(), .sw(), .lw(), .pr2(), .setx(), .bex(), .r1(), .r2(), .w(), .aluop(), .shamt(), .targetExd(), .ImmedSignExd(), .addi(), .opcode(), .regALU(), .instruction());
+
+mux_4(.out(), .select4(), .in0(), .in1(), .in2(), .in3());
+
+
+
+
+instrDecode DXdecode(.jt(), .bne(), .jal(), .rwe(), .jr(), .ALUinB(), .blt(), .sw(), .lw(), .pr2(), .setx(), .bex(), .r1(), .r2(), .w(), .aluop(aluop), .shamt(ctrl_shiftamt), .targetExd(), .ImmedSignExd(), .instruction());
+
+
+instrDecode DXdecode(.jt(), .bne(), .jal(), .rwe(), .jr(), 
+.ALUinB(), .useRstat(), .blt(), .sw(), .lw(), .pr2(), .setx(), 
+.bex(), .r1(), .r2(), .w(), .aluop(aluop), .shamt(ctrl_shiftamt), .instruction());
+
