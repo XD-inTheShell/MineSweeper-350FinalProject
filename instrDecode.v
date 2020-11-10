@@ -1,4 +1,4 @@
-module instrDecode(jt, bne, jal, rwe, jr, ALUinB, blt, sw, lw, pr2, setx, bex, r1, r2, w, aluop, shamt, targetExd, ImmedSignExd, addi, opcode, regALU, instruction, cko, ckx, cky, bid);
+module instrDecode(jt, bne, jal, rwe, jr, ALUinB, blt, sw, lw, pr2, setx, bex, r1, r2, w, aluop, shamt, targetExd, ImmedSignExd, addi, opcode, regALU, instruction, cko, ckx, cky, bid, clrp, nck);
 
 input [31:0] instruction;
 ///*****
@@ -50,7 +50,7 @@ output addi;
 output regALU;
 wire [1:0] sRd, sRt;
 wire sll_sra;
-output cko, ckx, cky, bid;
+output cko, ckx, cky, bid, clrp, nck;
 
 assign regALU = isa[0];
 assign jt = isa[1];
@@ -66,8 +66,9 @@ assign lw = isa[8];
 assign cko = isa[9];
 assign ckx = isa[10];
 assign cky = isa[11];
-
+assign clrp = isa[12];
 assign bid = isa[13];
+assign nck = isa[14];
 //
 /////////////////////////////////////
 assign setx = isa[21];
@@ -91,9 +92,9 @@ wire noRs, noRt, noRd;
 wire [4:0] grdrt, grdrd;
 ////////////////////////////////////
 // Minesweeper Mod
-assign noRs = jt | jal | jr | bex | setx |ckx | cky | cko | bid;
-assign noRt = addi | sll_sra | setx | lw | jt | jal |ckx | cky | cko | bid;
-or setRd0(noRd, sw, jt, jr, bne, blt, bex);
+assign noRs = jt | jal | jr | bex | setx |ckx | cky | cko | bid | clrp | nck;
+assign noRt = addi | sll_sra | setx | lw | jt | jal |ckx | cky | cko | bid | clrp | nck;
+or setRd0(noRd, sw, jt, jr, bne, blt, bex, clrp, nck);
 //
 ////////////////////////////////////
 assign grdrt = noRt ? 5'b0 : rt;

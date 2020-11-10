@@ -15,12 +15,13 @@ module Wrapper(clock, reset, right, left, up, down, flip, hSync, vSync, VGA_R, V
     input [8:0] y_topleft;
     input [31:0] VGAid;
 
-    wire rwe, mwe;
+    wire rwe, mwe, nowCheck;
     wire[4:0] rd, rs1, rs2;
     wire[31:0] instAddr, instData, 
                rData, regA, regB,
                memAddr1, memAddr2, memDataIn, 
-               memDataOut1, memDataOut2;
+               memDataOut1, memDataOut2,
+               blockID_data;
     
     ///// Main Processing Unit
     processor CPU(.clock(clock), .reset(reset), 
@@ -41,7 +42,8 @@ module Wrapper(clock, reset, right, left, up, down, flip, hSync, vSync, VGA_R, V
                   .x_game(x_topleft),
                   .y_game(y_topleft),
                   .pr_reset(),
-                  .VGAid(VGAid)
+                  .VGAid(VGAid),
+                  .nowCheck(nowCheck)
                   ); 
                   
     ///// Instruction Memory (ROM)
@@ -52,10 +54,15 @@ module Wrapper(clock, reset, right, left, up, down, flip, hSync, vSync, VGA_R, V
              .ctrl_writeEnable(rwe), .ctrl_reset(reset), 
              .ctrl_writeReg(rd),
              .ctrl_readRegA(rs1), .ctrl_readRegB(rs2), 
-             .data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB));
+             .data_writeReg(rData), .data_readRegA(regA), .data_readRegB(regB), .blockID_data(blockID_data));
              
     ///// Processor Memory (RAM)
-    BlockRAM BlockInfo(.clk(clock), .wEn(mwe), .addr1(memAddr1[11:0]), .addr2(memAddr2[11:0]), .dataIn(memDataIn), .dataOut1(memDataOut1), .dataOut2(memDataOut2));
+    /////////////////////////////////
+    // Modified for Minesweeper
+    BlockRAM BlockInfo(.clk(clock), .wEn(mwe), .addr1(memAddr1[11:0]), .addr2(memAddr2[11:0]), 
+            .dataIn(memDataIn), .dataOut1(memDataOut1), .dataOut2(memDataOut2), 
+            .checkID(blockID_data), .nowCheck(nowCheck));
+    /////////////////////////////////
 
     ///// VGA Controller
     VGAController VGA(.clk(), 			

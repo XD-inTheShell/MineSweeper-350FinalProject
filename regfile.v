@@ -1,14 +1,18 @@
 module regfile(
     clock, ctrl_writeEnable, ctrl_reset, ctrl_writeReg, 
     ctrl_readRegA, ctrl_readRegB, data_writeReg, data_readRegA, 
-    data_readRegB
+    data_readRegB,
+    ////////////////////
+    //game mod
+    blockID_data
+    ////////////////////
 );
 
     input clock, ctrl_writeEnable, ctrl_reset;
     input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
     input [31:0] data_writeReg;
 
-    output [31:0] data_readRegA, data_readRegB;
+    output [31:0] data_readRegA, data_readRegB, blockID_data;
     
 
     wire [31:0] decoderOut;
@@ -51,5 +55,9 @@ module regfile(
 
     decoderTristate selectRegA(data_readRegA, ctrl_readRegA, Rgout0, Rgout1, Rgout2, Rgout3, Rgout4, Rgout5, Rgout6, Rgout7, Rgout8, Rgout9, Rgout10, Rgout11, Rgout12, Rgout13, Rgout14, Rgout15, Rgout16, Rgout17, Rgout18, Rgout19, Rgout20, Rgout21, Rgout22, Rgout23, Rgout24, Rgout25, Rgout26, Rgout27, Rgout28, Rgout29, Rgout30, Rgout31); 
     decoderTristate selectRegB(data_readRegB, ctrl_readRegB, Rgout0, Rgout1, Rgout2, Rgout3, Rgout4, Rgout5, Rgout6, Rgout7, Rgout8, Rgout9, Rgout10, Rgout11, Rgout12, Rgout13, Rgout14, Rgout15, Rgout16, Rgout17, Rgout18, Rgout19, Rgout20, Rgout21, Rgout22, Rgout23, Rgout24, Rgout25, Rgout26, Rgout27, Rgout28, Rgout29, Rgout30, Rgout31);
-
+    ////////////////////
+    //game mod
+    assign blockID_data = Rgout29;
+    //Reg 29 is for block ID
+    ////////////////////
 endmodule

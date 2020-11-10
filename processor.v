@@ -47,7 +47,8 @@ module processor(
     x_game,
     y_game,
     VGAid,
-    pr_reset
+    pr_reset,
+    nowCheck
     //
 	///////////////////////////
 	);
@@ -75,7 +76,7 @@ module processor(
     input pressed;
     input[9:0] x_game;
     input[8:0] y_game;
-    output pr_reset;
+    output pr_reset, nowCheck;
     input [31:0] VGAid;
     //
 	///////////////////////////
@@ -150,11 +151,12 @@ module processor(
     ///**For now, D2 in = D1 out**/ assign X2_PC = X1_PC;
     /**For now, D2 in = D1 out**/ assign X2_B = input2;
     wire X_add, X_addi, X_sub, X_subsig, regALU, X_bne, X_blt, X_jt, X_jal, X_bex, X_jr, X_setx;
-    wire X_cko, X_ckx, X_cky, X_bid; 
-    instrDecode DXdecode(.jt(X_jt), .bne(X_bne), .jal(X_jal), .rwe(), .jr(X_jr), .ALUinB(useImm), .blt(X_blt), .sw(), .lw(X_lw), .pr2(), .setx(X_setx), .bex(X_bex), .r1(X_ctrl_reaRegA), .r2(X_ctrl_reaRegB), .w(X_writeAddr), .aluop(aluop), .shamt(ctrl_shiftamt), .targetExd(X_target), .ImmedSignExd(B_Imm), .addi(X_addi), .opcode(X_opcode), .regALU(regALU), .instruction(X1_IR), .cko(X_cko), .ckx(X_ckx), .cky(X_cky), .bid(X_bid));
+    wire X_cko, X_ckx, X_cky, X_bid, X_clrp; 
+    instrDecode DXdecode(.jt(X_jt), .bne(X_bne), .jal(X_jal), .rwe(), .jr(X_jr), .ALUinB(useImm), .blt(X_blt), .sw(), .lw(X_lw), .pr2(), .setx(X_setx), .bex(X_bex), .r1(X_ctrl_reaRegA), .r2(X_ctrl_reaRegB), .w(X_writeAddr), .aluop(aluop), .shamt(ctrl_shiftamt), .targetExd(X_target), .ImmedSignExd(B_Imm), .addi(X_addi), .opcode(X_opcode), .regALU(regALU), .instruction(X1_IR), .cko(X_cko), .ckx(X_ckx), .cky(X_cky), .bid(X_bid), .clrp(X_clrp));
     nor ovrgate1(X_add, aluop[0],aluop[1],aluop[2],aluop[3],aluop[4]);
     nor ovrgate2(X_subsig, aluop[1],aluop[2],aluop[3],aluop[4]);
     and ovrgate3(X_sub, X_subsig, aluop[0]);
+    assign pr_reset = X_clrp ? 1'b1 : 1'b0;
     //MULTDIV
     //***Stall logic***//
     wire isMULTDIV, multdivRDY, multdiveException, isMult, isDiv, enStallReg, inOperation;
@@ -255,9 +257,9 @@ module processor(
     //assign M2_IR = stall_multdiv ? 32'b0 : M1_IR;
     assign M2_IR = M1_IR;
     //***Stall logic***//
-    
+    wire W_nck;
     MW latch4(.W_O(W1_O), .W_D(W1_D), .W_IR(W1_IR), .M_O(M2_O), .M_D(M2_D), .M_IR(M2_IR), .clock(latchClock), .reset(reset));
-    instrDecode MWdecode(.jt(), .bne(), .jal(), .rwe(W_rwe), .jr(), .ALUinB(), .blt(), .sw(), .lw(W_lw), .pr2(), .setx(W_setx), .bex(), .r1(), .r2(), .w(W_writeAddr), .aluop(), .shamt(), .targetExd(W_Target), .ImmedSignExd(), .addi(), .opcode(W_aluop), .regALU(W_regALU), .instruction(W1_IR), .cko(), .ckx(), .cky());
+    instrDecode MWdecode(.jt(), .bne(), .jal(), .rwe(W_rwe), .jr(), .ALUinB(), .blt(), .sw(), .lw(W_lw), .pr2(), .setx(W_setx), .bex(), .r1(), .r2(), .w(W_writeAddr), .aluop(), .shamt(), .targetExd(W_Target), .ImmedSignExd(), .addi(), .opcode(W_aluop), .regALU(W_regALU), .instruction(W1_IR), .cko(), .ckx(), .cky(), .nck(W_nck));
     assign W_isMULTDIV = (~W_aluop[4] & ~W_aluop[3] & W_aluop[2] & W_aluop[1] & W_regALU);
     mux_2 selectwData(.out(W_writeData), .select2(W_lw), .in0(W1_O), .in1(W1_D));
     /**For now, D2 in = D1 out**/ 
@@ -268,6 +270,11 @@ module processor(
     assign ctrl_writeReg = writeAddr;
     assign writeData = multdivRDY ? multdivFinal : W_writeData;
     assign data_writeReg = writeData;
+
+    /////////////////////////
+    //game logic
+    assign nowCheck = W_nck ? 1'b1 : 1'b0;
+    /////////////////////////
 
 
 
