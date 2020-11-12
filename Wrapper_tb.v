@@ -13,10 +13,17 @@ module Wrapper_tb();
         y_topleft = 8'd3;
         flip = 0;
         VGAid = 0;
-        #10
+        #50
         flip = 1;
-        VGAid = 32'd6;
+        VGAid = 32'd1;
+        #200
+        flip = 0;
         //Set a time delay, in nanoseconds
+        #250
+        flip = 1;
+        VGAid = 8;
+        #300
+        flip = 0;
         #8000;
 
         //Ends the testbench

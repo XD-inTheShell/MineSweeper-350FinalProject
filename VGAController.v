@@ -2,14 +2,15 @@
 module VGAController(     
 	input clk, 			// 100 MHz System Clock
 	input reset, 		// Reset Signal
-	input left, input right, input up, input down,
+	input left, input right, input up, input down, input middle, input pr_reset,
 	output hSync, 		// H Sync Signal
 	output vSync, 		// Veritcal Sync Signal
 	output[3:0] VGA_R,  // Red Signal Bits
 	output[3:0] VGA_G,  // Green Signal Bits
 	output[3:0] VGA_B,  // Blue Signal Bits
 	inout ps2_clk,
-	inout ps2_data);
+	inout ps2_data,
+	output pressed);
 	
 	// Lab Memory Files Location
 	//localparam FILES_PATH = "C:/Users/xd54/Desktop/testFinal/";
@@ -173,6 +174,28 @@ module VGAController(
 			HasMoved <= 0;
 		
 	end
+
+	
+	reg hasPressed = 0;
+	reg hasReset = 0;
+	always @(posedge clk) begin
+		if(pr_reset) begin
+			hasReset <= 1;
+			hasPressed <= 0;
+		end	
+		else if( middle) begin
+			if(~hasReset) begin
+				hasPressed <= 1;
+			end
+		end
+		else
+			hasReset <= 0;
+	
+
+	end
+
+	assign pressed = hasPressed;
+
 	
 	
 endmodule

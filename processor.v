@@ -223,8 +223,13 @@ module processor(
     //***Branch Recovery***//
     wire branchS0, branchS1;
     wire [31:0] X_pcAdd1N, X_PCfinal;
-    assign branchS0 = X_jr | (X_bne & isNotEqual) | (X_blt & ~isLessThan & isNotEqual);
+    /////////////////////////////////////
+    // FOR MINESWEEPER
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CHANGED BNE TO BEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    assign branchS0 = X_jr | (X_bne & ~isNotEqual) | (X_blt & ~isLessThan & isNotEqual);
     assign branchS1 = (X_jt | X_jal | (X_bex & isNotEqual)) | X_jr;
+    /////////////////////////////////////
+
     cla_adder branchAdd(.out(X_pcAdd1N), .overflow(), .A(X1_PC), .B(B_Imm), .carry_in(1'b0));
     mux_4 choosePC(.out(X_PCfinal), .select4({branchS1,branchS0}), .in0(pcADDOne), .in1(X_pcAdd1N), .in2(X_target), .in3(X2_O));
     // flush
