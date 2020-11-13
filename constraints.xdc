@@ -1,10 +1,26 @@
 // Clock on E3
-set_property PACKAGE_PIN E3 [get_ports clk]
-set_property IOSTANDARD LVCMOS33 [get_ports clk]
+set_property PACKAGE_PIN E3 [get_ports clock]
+set_property IOSTANDARD LVCMOS33 [get_ports clock]
 
 // Rest Signal
-set_property PACKAGE_PIN N17 [get_ports reset]
+set_property PACKAGE_PIN V10 [get_ports reset]
 set_property IOSTANDARD LVCMOS33 [get_ports reset]
+
+// button pins
+set_property PACKAGE_PIN P17 [get_ports left]
+set_property IOSTANDARD LVCMOS33 [get_ports left]
+
+set_property PACKAGE_PIN M17 [get_ports right]
+set_property IOSTANDARD LVCMOS33 [get_ports right]
+
+set_property PACKAGE_PIN M18 [get_ports up]
+set_property IOSTANDARD LVCMOS33 [get_ports up]
+
+set_property PACKAGE_PIN P18 [get_ports down]
+set_property IOSTANDARD LVCMOS33 [get_ports down]
+
+set_property PACKAGE_PIN N17 [get_ports middle]
+set_property IOSTANDARD LVCMOS33 [get_ports middle]
 
 // VGA Port
 set_property PACKAGE_PIN D8 [get_ports {VGA_B[3]}]

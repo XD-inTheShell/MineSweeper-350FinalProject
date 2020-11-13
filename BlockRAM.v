@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module BlockRAM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, MEMFILE = "dataMem.mem") (
+module BlockRAM #( parameter DATA_WIDTH = 32,  ADDRESS_WIDTH = 10, DEPTH = 1024, MEMFILE = "dataMem.mem") (
     input wire                     clk,
     input wire                     wEn,
     input wire [ADDRESS_WIDTH-1:0] addr1,
@@ -71,4 +71,3 @@ module BlockRAM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, 
     //       $display("%d,     %d,     %d",numArray[0][0], numArray[0][1], numArray[4][2]);
     //   end
 endmodule
-

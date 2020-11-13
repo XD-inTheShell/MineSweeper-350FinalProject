@@ -1,0 +1,82 @@
+.text
+j main
+
+openBlock:
+    addi $r27, $r0, 30 # 27 is sp0
+    addi $r28, $r0, 30 # 28 is sp1
+
+    addi $r31, $r31, 4000 # nck
+    lw $r6, 0($r29)
+    beq $r0, $r6, initialque
+    j endque
+initialque:
+    addi $r7, $r0, 5
+    addi $r8, $r0, 10
+    addi $r9, $r0, 15
+    addi $r10, $r0, 0
+    addi $r11, $r0, 20
+    #check surrounding
+    beq $r29, $r7, noleft
+    beq $r29, $r8, noleft
+    beq $r29, $r9, noleft
+    beq $r29, $r10, noleft
+    beq $r29, $r11, noleft
+    addi $r29, $r29, -1
+    lw $r5, 0($r29)
+    addi $r31, $r31, 4000 # nck
+    lw $r6, 0($r29)
+    beq $r6, $r0, addtoque_left
+    sw $r5, 0($r29)
+    
+    j skipadd_left
+addtoque_left:
+    addi $r28, $r28, 1 # sp1
+    sw $r29, 0($r28)
+skipadd_left:
+    addi $r29, $r29, 1
+noleft:
+    
+checkQue:
+    beq $r27, $r28, endque
+    j initialque
+endque:
+    jr $r31
+
+main:
+    addi $r9, $r0, 9
+    addi $r10, $r0, 10
+    addi $r1, $r0, 1
+checkPressedloop:
+    addi $r31, $r31, 1000 # cko $r2
+    bne $r1, $r2, 1 # beq | pressed, start subroutine
+    j checkPressedloop
+startFlip:
+    addi $r31, $r31, 2000 # clrpr
+    addi $r31, $r31, 3000 # bid $r3
+    lw $r4, 0($r3)
+    bne $r4, $r10, 1 #beq | bomb if eq
+    j continue
+infLoop:
+    sw $r9, 0($r3)
+    blt $r0, $r1, -1
+continue:
+    add $r29, $r3, $r0
+    jal openBlock
+    j checkPressedloop
+
+
+# checkPressedloop(blockid):
+#     if(block!=0): cko 
+#     else :
+#         checkPressedloop(0)
+#         checkPressedloop(1)
+#         checkPressedloop(2)
+#         ...
+#         checkPressedloop(7) ## 8 surrounding blocks to check
+#     return 
+# for loop:
+#  avoid checking boundary
+#  check all surrounding add flag
+# for loop:
+#     iterate mine and checi flagged
+#     call first loop

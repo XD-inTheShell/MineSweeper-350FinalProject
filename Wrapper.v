@@ -61,7 +61,7 @@ module Wrapper(clock, reset, right, left, up, down, middle, hSync, vSync, VGA_R,
     /////////////////////////////////
     // Modified for Minesweeper
     assign memAddr2 = loadBlock;
-    BlockRAM BlockInfo(.clk(clk50), .wEn(mwe), .addr1(memAddr1[11:0]), .addr2(memAddr2[11:0]), 
+    BlockRAM BlockInfo(.clk(clk50), .wEn(mwe), .addr1(memAddr1[9:0]), .addr2(memAddr2[9:0]), 
             .dataIn(memDataIn), .dataOut1(memDataOut1), .dataOut2(memDataOut2), 
             .checkID(blockID_data), .nowCheck(nowCheck));
     /////////////////////////////////

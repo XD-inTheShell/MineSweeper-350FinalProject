@@ -21,8 +21,8 @@ module VGAController(
 	localparam FILES_PATH = "/Users/xiyingdeng/Desktop/Fall2020/ECE350/AG350/MineSweeper-350FinalProject/";
 	// Clock divider 50 MHz -> 25 MHz
 	wire clk25; // 25MHz clock
-	reg [9:0] x_topleft=2;
-    reg [8:0] y_topleft=2;
+	reg [9:0] x_topleft=1;
+    reg [8:0] y_topleft=4;
 	
   
 
