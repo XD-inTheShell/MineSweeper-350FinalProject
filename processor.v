@@ -107,7 +107,10 @@ module processor(
     wire W_isMULTDIV, W_regALU, W_setx;
     wire [31:0] writeData0, W_Target, multdivFinal;
     wire [4:0] W_aluop, muldivNormAddr;
-
+    wire branchS0, branchS1;
+    wire [31:0] X_pcAdd1N, X_PCfinal;
+    wire branch_flush;
+    wire [31:0] input2, aluResult;
     //-------------------------------------------------
     // ******** Stage 1 **********
     // PC Register
@@ -178,7 +181,7 @@ module processor(
     assign PW_ismul = ~PW_aluop[0];
 
     //*******ALU********//
-    wire [31:0] input2, aluResult;
+    
     
     //***Bypassing***//
     // ALUinA
@@ -208,7 +211,7 @@ module processor(
     // overflow check:
     wire [31:0] X2_nostall_IR, X2_Ofinal0, X2_Ofinal;
     wire s1, s2, add_op;
-    nor ovrgate1(add_op, X_opcode[0],X_opcode[1],X_opcode[2],X_opcode[3],X_opcode[4]);
+    nor ovrgate4(add_op, X_opcode[0],X_opcode[1],X_opcode[2],X_opcode[3],X_opcode[4]);
     assign s1 = ((X_add & add_op) | X_sub) & overflow;
     assign s2 = (X_addi | X_sub) & overflow;
     mux_4 selectRstatusVal(.out(X2_O), .select4({s2,s1}), .in0(aluResult), .in1(32'd1), .in2(32'd2), .in3(32'd3));
@@ -221,8 +224,7 @@ module processor(
     assign X2_nostall_IR[26:22] = overflow ? 5'd30 : X1_IR[26:22];
 
     //***Branch Recovery***//
-    wire branchS0, branchS1;
-    wire [31:0] X_pcAdd1N, X_PCfinal;
+    
     /////////////////////////////////////
     // FOR MINESWEEPER
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CHANGED BNE TO BEQ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -233,7 +235,7 @@ module processor(
     cla_adder branchAdd(.out(X_pcAdd1N), .overflow(), .A(X1_PC), .B(B_Imm), .carry_in(1'b0));
     mux_4 choosePC(.out(X_PCfinal), .select4({branchS1,branchS0}), .in0(pcADDOne), .in1(X_pcAdd1N), .in2(X_target), .in3(X2_O));
     // flush
-    wire branch_flush;
+    
     assign branch_flush = branchS0 | branchS1;
 
 

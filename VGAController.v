@@ -1,6 +1,6 @@
 `timescale 1 ns/ 100 ps
 module VGAController(     
-	input clk, 			// 100 MHz System Clock
+	input clk, 			// 50 MHz System Clock
 	input reset, 		// Reset Signal
 	input left, input right, input up, input down, input middle, input pr_reset,
 	output hSync, 		// H Sync Signal
@@ -10,22 +10,26 @@ module VGAController(
 	output[3:0] VGA_B,  // Blue Signal Bits
 	inout ps2_clk,
 	inout ps2_data,
-	output pressed);
+	output pressed,
+	output [31:0] VGAid,
+	output [31:0] loadBlock,
+	input [31:0] memDataOut2
+	);
 	
 	// Lab Memory Files Location
 	//localparam FILES_PATH = "C:/Users/xd54/Desktop/testFinal/";
 	localparam FILES_PATH = "/Users/xiyingdeng/Desktop/Fall2020/ECE350/AG350/MineSweeper-350FinalProject/";
-	// Clock divider 100 MHz -> 25 MHz
+	// Clock divider 50 MHz -> 25 MHz
 	wire clk25; // 25MHz clock
 	reg [9:0] x_topleft=2;
     reg [8:0] y_topleft=2;
 	
   
 
-	reg[1:0] pixCounter = 0;      // Pixel counter to divide the clock
-    assign clk25 = pixCounter[1]; // Set the clock high whenever the second bit (2) is high
+	reg pixCounter2 = 0;      // Pixel counter to divide the clock
+    assign clk25 = pixCounter2; // Set the clock high whenever the second bit (2) is high
 	always @(posedge clk) begin
-		pixCounter <= pixCounter + 1; // Since the reg is only 3 bits, it will reset every 8 cycles
+		pixCounter2 <= pixCounter2 + 1; // Since the reg is only 3 bits, it will reset every 8 cycles
 	end
 
 	// VGA Timing Generation for a Standard VGA Screen
@@ -115,11 +119,15 @@ module VGAController(
 	assign blockID = ((y_proc) << 2) + y_proc + x_index - 1;
 	wire legalBlk;
 	assign legalBlk = blockID < 25;
-	assign blockID_final = bg ? 32'b0 : blockID;
-  	// for testing:
-	VGAtestRAM blockInfo(.wEn(1'b0), .addr({2'b0,blockID}), .clk(clk),
-                  .dataIn(32'b0), .dataOut(memOut));
-	assign blockStatus = memOut[3:0];
+	//assign blockID_final = bg ? 32'b0 : blockID;
+	wire [31:0] y_mark_proc;
+	assign y_mark_proc = y_topleft - 1;
+	assign VGAid = ((y_mark_proc) << 2) + y_mark_proc + x_topleft - 1;
+	assign loadBlock = {22'b0,blockID};
+  	// // for testing:
+	// VGAtestRAM blockInfo(.wEn(1'b0), .addr({2'b0,blockID}), .clk(clk),
+    //               .dataIn(32'b0), .dataOut(memOut));
+	assign blockStatus = memDataOut2[3:0];
 
 	
 

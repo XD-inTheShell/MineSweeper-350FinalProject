@@ -12,7 +12,8 @@ module BlockRAM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, 
     ); //VGA read
     
     reg[DATA_WIDTH-1:0] MemoryArray[0:DEPTH-1];
-
+    wire [31:0] numArray[24:0];
+    
     initial begin
         if(MEMFILE > 0) begin
             $readmemh(MEMFILE, MemoryArray);
@@ -33,7 +34,7 @@ module BlockRAM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, 
     assign dataOut1 = MemoryArray[addr1];
     assign dataOut2 = MemoryArray[addr2];
 
-    wire [31:0] numArray[24:0];
+    
 
     assign numArray[0] = (MemoryArray[1]==32'd10) + (MemoryArray[6]==32'd10) + (MemoryArray[5]==32'd10);
     assign numArray[4] = (MemoryArray[3]==32'd10) + (MemoryArray[8]==32'd10) + (MemoryArray[9]==32'd10);

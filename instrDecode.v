@@ -101,7 +101,7 @@ assign grdrt = noRt ? 5'b0 : rt;
 assign grdrd = noRd ? 5'b0 : rd;
 
 mux4_5 selectRd(w, sRd, grdrd, 5'd31, 5'd30, 5'bx);
-mux4_5 selectRt(r2,sRt, grdrt, rd, 5'd30, 5'bx);
+mux4_5 selectRt0(r2,sRt, grdrt, rd, 5'd30, 5'bx);
 
 assign r1 = noRs ? 5'b0 : rs;
 

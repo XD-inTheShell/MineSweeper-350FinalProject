@@ -1,29 +1,22 @@
 `timescale 1 ns / 100 ps
 module Wrapper_tb();
-    reg clock, reset, flip;
-    reg [9:0] x_topleft;
-    reg [8:0] y_topleft;
-    reg [31:0] VGAid;
-    Wrapper Pipelined_Processor(.clock(clock), .reset(reset), .x_topleft(x_topleft), .y_topleft(y_topleft), .flip(flip), .VGAid(VGAid));
+    reg clock, reset, right, left, up, down, middle;
+    Wrapper Pipelined_Processor(.clock(clock), .reset(reset), .right(right), .left(left), .up(up), .down(down), .middle(middle), .hSync(), .vSync(), .VGA_R(), .VGA_G(), .VGA_B());
 
     initial begin
         clock = 0;
         reset = 0;
-        x_topleft = 9'd5;
-        y_topleft = 8'd3;
-        flip = 0;
-        VGAid = 0;
-        #50
-        flip = 1;
-        VGAid = 32'd1;
-        #200
-        flip = 0;
-        //Set a time delay, in nanoseconds
-        #250
-        flip = 1;
-        VGAid = 8;
-        #300
-        flip = 0;
+        right = 0;
+        left = 0;
+        middle = 0;
+        up = 0;
+        down = 0;
+
+        #10
+        right = 1;
+        down = 1;
+        middle = 1;
+        
         #8000;
 
         //Ends the testbench
