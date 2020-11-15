@@ -4,6 +4,8 @@ j main
 addtoque:
     addi $r28, $r28, 1 # sp1
     sw $r29, 0($r28)
+    addi $r15, $r0, 1 #####
+    sw $r15, 50($r29) #####
     jr $r31
 
 main:
@@ -52,11 +54,11 @@ continueQue:
     addi $r10, $r0, 0
     addi $r11, $r0, 20
     
-    bne $r29, $r7, noleft
-    bne $r29, $r8, noleft
-    bne $r29, $r9, noleft
-    bne $r29, $r10, noleft
-    bne $r29, $r11, noleft9
+    bne $r29, $r7, 14
+    bne $r29, $r8, 13
+    bne $r29, $r9, 12
+    bne $r29, $r10, 11
+    bne $r29, $r11, 10
     addi $r29, $r29, -1
     lw $r5, 0($r29)
     addi $r31, $r31, 4000 # nck
@@ -65,6 +67,10 @@ continueQue:
     bne $r6, $r0, 2
     sw $r5, 0($r29)
     j skipadd_left
+    
+    lw $r12, 50($r29) #####
+    bne $r12, $r0, 1#####
+    j skipadd_left#####
     jal addtoque
 skipadd_left:
     addi $r29, $r29, 1
@@ -76,13 +82,13 @@ noleft:
     addi $r8, $r0, 9
     addi $r9, $r0, 14
     addi $r10, $r0, 19
-    addi $r11, $r0, 14
+    addi $r11, $r0, 24
     
-    bne $r29, $r7, noright
-    bne $r29, $r8, noright
-    bne $r29, $r9, noright
-    bne $r29, $r10, noright
-    bne $r29, $r11, noright
+    bne $r29, $r7, 14
+    bne $r29, $r8, 13
+    bne $r29, $r9, 12
+    bne $r29, $r10, 11
+    bne $r29, $r11, 10
     addi $r29, $r29, 1
     lw $r5, 0($r29)
     addi $r31, $r31, 4000 # nck
@@ -91,6 +97,11 @@ noleft:
     bne $r6, $r0, 2
     sw $r5, 0($r29)
     j skipadd_right
+    
+    lw $r12, 50($r29) #####
+    bne $r12, $r0, 1#####
+    j skipadd_right#####
+    
     jal addtoque
 skipadd_right:
     addi $r29, $r29, -1
