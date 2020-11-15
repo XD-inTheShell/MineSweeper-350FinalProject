@@ -1,22 +1,44 @@
 `timescale 1 ns / 100 ps
 module Wrapper_tb();
-    reg clock, reset, right, left, up, down, middle;
-    Wrapper Pipelined_Processor(.clock(clock), .reset(reset), .right(right), .left(left), .up(up), .down(down), .middle(middle), .hSync(), .vSync(), .VGA_R(), .VGA_G(), .VGA_B());
+    reg clock, reset, flip;
+    reg [9:0] x_topleft;
+    reg [8:0] y_topleft;
+    reg [31:0] VGAid;
+    Wrapper Pipelined_Processor(.clock(clock), .reset(reset), .x_topleft(x_topleft), .y_topleft(y_topleft), .flip(flip), .VGAid(VGAid));
 
     initial begin
         clock = 0;
         reset = 0;
-        right = 0;
-        left = 0;
-        middle = 0;
-        up = 0;
-        down = 0;
-
-        #10
-        right = 1;
-        down = 1;
-        middle = 1;
-        
+        x_topleft = 9'd5;
+        y_topleft = 8'd3;
+        flip = 0;
+        VGAid = 0;
+        #5000
+        flip = 1;
+        VGAid = 9;
+        #200
+        flip = 0;
+        //Set a time delay, in nanoseconds
+        #2000
+        flip = 1;
+        VGAid = 2;
+        #200
+        flip = 0;
+        #2000
+        flip = 1;
+        VGAid = 20;
+        #200
+        flip = 0;
+        #2000
+        flip = 1;
+        VGAid = 1;
+        #200
+        flip = 0;
+        #2000
+        flip = 1;
+        VGAid = 15; // should not flip since bomb triggered previously
+        #200
+        flip = 0;
         #8000;
 
         //Ends the testbench
@@ -54,6 +76,22 @@ module Wrapper_tb();
         $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[22]);
         $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[23]);
         $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[24]);
+
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[30]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[31]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[32]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[33]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[34]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[35]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[36]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[37]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[38]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[39]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[40]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[41]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[42]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[43]);
+        $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.MemoryArray[44]);
 
         $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.numArray[0]);
         $dumpvars(0, Wrapper_tb.Pipelined_Processor.BlockInfo.numArray[1]);

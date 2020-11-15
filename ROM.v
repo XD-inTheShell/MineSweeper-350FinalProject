@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module ROM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, MEMFILE = "gameProg.mem") (
+module ROM #( parameter DATA_WIDTH = 32, ADDRESS_WIDTH = 12, DEPTH = 4096, MEMFILE = "percolateGame.mem") (
     input wire                     clk,
     input wire                     wEn,
     input wire [ADDRESS_WIDTH-1:0] addr,

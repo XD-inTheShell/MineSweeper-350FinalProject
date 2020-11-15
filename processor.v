@@ -242,13 +242,14 @@ module processor(
     
 
     //----------------------------- XM Latch -------------------------------//
+    wire M_nck;
     //***Stall logic***//
     assign X2_IR = stall_multdiv ? 32'b0 : X2_nostall_IR;
     //***Stall logic***//
     XM latch3(M1_O, M1_B, M1_IR, X2_Ofinal, X2_B, X2_IR, latchClock, reset);
     
     /**For now, D2 in = D1 out**/ assign M2_O = M1_O;
-    instrDecode XMdecode(.jt(), .bne(), .jal(), .rwe(), .jr(), .ALUinB(), .blt(), .sw(M_sw), .lw(), .pr2(), .setx(), .bex(), .r1(), .r2(M_ctrl_reaRegB), .w(M1_Rd), .aluop(), .shamt(), .targetExd(), .ImmedSignExd(), .addi(), .opcode(), .regALU(), .instruction(M1_IR), .cko(), .ckx(), .cky());
+    instrDecode XMdecode(.jt(), .bne(), .jal(), .rwe(), .jr(), .ALUinB(), .blt(), .sw(M_sw), .lw(), .pr2(), .setx(), .bex(), .r1(), .r2(M_ctrl_reaRegB), .w(M1_Rd), .aluop(), .shamt(), .targetExd(), .ImmedSignExd(), .addi(), .opcode(), .regALU(), .instruction(M1_IR), .cko(), .ckx(), .cky(), .nck(M_nck));
     //***Bypassing***//
     eqCheck MWbypass(.Aneqz(M_Rtneqz), .equality(MWeq), .inA(M_ctrl_reaRegB), .inB(writeAddr));
     //assign Ds = M_Rtneqz & MWeq & W_lw;
@@ -258,7 +259,11 @@ module processor(
     assign address_dmem = M1_O;
     assign wren = M_sw;
     assign M2_D = q_dmem;
-    
+    /////////////////////////
+    //game logic
+    assign nowCheck = M_nck ? 1'b1 : 1'b0;
+    /////////////////////////
+
     //----------------------------- MW Latch ------------------------------//
     //***Stall logic***//
     //assign M2_IR = stall_multdiv ? 32'b0 : M1_IR;
@@ -278,10 +283,7 @@ module processor(
     assign writeData = multdivRDY ? multdivFinal : W_writeData;
     assign data_writeReg = writeData;
 
-    /////////////////////////
-    //game logic
-    assign nowCheck = W_nck ? 1'b1 : 1'b0;
-    /////////////////////////
+   
 
 
 
