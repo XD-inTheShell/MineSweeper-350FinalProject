@@ -54,11 +54,14 @@ continueQue:
     addi $r10, $r0, 0
     addi $r11, $r0, 20
     
-    bne $r29, $r7, 14
-    bne $r29, $r8, 13
-    bne $r29, $r9, 12
-    bne $r29, $r10, 11
-    bne $r29, $r11, 10
+    bne $r29, $r7, 5
+    bne $r29, $r8, 4
+    bne $r29, $r9, 3
+    bne $r29, $r10, 2
+    bne $r29, $r11, 1
+    j contleft
+    j noleft
+contleft:
     addi $r29, $r29, -1
     lw $r5, 0($r29)
     addi $r31, $r31, 4000 # nck
@@ -84,11 +87,14 @@ noleft:
     addi $r10, $r0, 19
     addi $r11, $r0, 24
     
-    bne $r29, $r7, 14
-    bne $r29, $r8, 13
-    bne $r29, $r9, 12
-    bne $r29, $r10, 11
-    bne $r29, $r11, 10
+    bne $r29, $r7, 5
+    bne $r29, $r8, 4
+    bne $r29, $r9, 3
+    bne $r29, $r10, 2
+    bne $r29, $r11, 1
+    j contright
+    j noright
+contright:
     addi $r29, $r29, 1
     lw $r5, 0($r29)
     addi $r31, $r31, 4000 # nck
@@ -108,6 +114,72 @@ skipadd_right:
 
    
 noright:
+    #check up
+    addi $r7, $r0, 0
+    addi $r8, $r0, 1
+    addi $r9, $r0, 2
+    addi $r10, $r0, 3
+    addi $r11, $r0, 4
+    
+    bne $r29, $r7, 5
+    bne $r29, $r8, 4
+    bne $r29, $r9, 3
+    bne $r29, $r10, 2
+    bne $r29, $r11, 1
+    j contup
+    j noup
+contup:
+    addi $r29, $r29, -5 #
+    lw $r5, 0($r29)
+    addi $r31, $r31, 4000 # nck
+    add $r0, $r0, $r0
+    lw $r6, 0($r29)
+    bne $r6, $r0, 2
+    sw $r5, 0($r29)
+    j skipadd_up
+    
+    lw $r12, 50($r29) #####
+    bne $r12, $r0, 1#####
+    j skipadd_up#####
+    
+    jal addtoque
+skipadd_up:
+    addi $r29, $r29, 5
+noup:
+
+#check down
+    addi $r7, $r0, 20
+    addi $r8, $r0, 21
+    addi $r9, $r0, 22
+    addi $r10, $r0, 23
+    addi $r11, $r0, 24
+    
+    bne $r29, $r7, 5
+    bne $r29, $r8, 4
+    bne $r29, $r9, 3
+    bne $r29, $r10, 2
+    bne $r29, $r11, 1
+    j contdown
+    j nodown
+contdown:
+    addi $r29, $r29, 5 #
+    lw $r5, 0($r29)
+    addi $r31, $r31, 4000 # nck
+    add $r0, $r0, $r0
+    lw $r6, 0($r29)
+    bne $r6, $r0, 2
+    sw $r5, 0($r29)
+    j skipadd_up
+    
+    lw $r12, 50($r29) #####
+    bne $r12, $r0, 1#####
+    j skipadd_down#####
+    
+    jal addtoque
+skipadd_down:
+    addi $r29, $r29, -5
+nodown:
+
     j initialque
 endque:
     j checkPressedloop

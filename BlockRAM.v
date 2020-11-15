@@ -5,8 +5,8 @@ module BlockRAM #( parameter DATA_WIDTH = 32,  ADDRESS_WIDTH = 10, DEPTH = 1024,
     input wire [ADDRESS_WIDTH-1:0] addr1,
     input wire [ADDRESS_WIDTH-1:0] addr2,
     input wire [DATA_WIDTH-1:0]    dataIn,
-    output reg [DATA_WIDTH-1:0]    dataOut1,
-    output reg [DATA_WIDTH-1:0]    dataOut2,
+    output wire [DATA_WIDTH-1:0]    dataOut1,
+    output wire [DATA_WIDTH-1:0]    dataOut2,
     input wire [31:0] checkID,
     input wire nowCheck
     ); //VGA read
@@ -28,12 +28,15 @@ module BlockRAM #( parameter DATA_WIDTH = 32,  ADDRESS_WIDTH = 10, DEPTH = 1024,
         end
         if(nowCheck) begin
             MemoryArray[checkID] <= updateInf;
-        end else begin
-            dataOut1 <= MemoryArray[addr1];
-            dataOut2 <= MemoryArray[addr2];
-        end
+        end //else begin
+        //     dataOut1 <= MemoryArray[addr1];
+        //     dataOut2 <= MemoryArray[addr2];
+        // end
 
     end
+    
+    assign dataOut1 = MemoryArray[addr1];
+    assign dataOut2 = MemoryArray[addr2];
 
     reg [31:0] value;
     always @(posedge clk) begin

@@ -15,31 +15,31 @@ module Wrapper_tb();
         VGAid = 0;
         #5000
         flip = 1;
-        VGAid = 10;
-        #200
-        flip = 0;
-        //Set a time delay, in nanoseconds
-        #5000
-        flip = 1;
         VGAid = 8;
         #200
         flip = 0;
-        #5000
-        flip = 1;
-        VGAid = 20;
-        #200
-        flip = 0;
-        #5000
-        flip = 1;
-        VGAid = 1;
-        #200
-        flip = 0;
-        #5000
-        flip = 1;
-        VGAid = 15; // should not flip since bomb triggered previously
-        #200
-        flip = 0;
-        #8000;
+        // //Set a time delay, in nanoseconds
+        // #8000
+        // flip = 1;
+        // VGAid = 8;
+        // #200
+        // flip = 0;
+        // #8000
+        // flip = 1;
+        // VGAid = 20;
+        // #200
+        // flip = 0;
+        // #8000
+        // flip = 1;
+        // VGAid = 1;
+        // #200
+        // flip = 0;
+        // #8000
+        // flip = 1;
+        // VGAid = 15; // should not flip since bomb triggered previously
+        // #200
+        // flip = 0;
+        #80000;
 
         //Ends the testbench
         $finish;
