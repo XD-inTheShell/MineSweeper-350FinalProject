@@ -95,9 +95,7 @@ noleft:
 skipadd_right:
     addi $r29, $r29, -1
 
-
-
-    
+   
 noright:
     j initialque
 endque:
